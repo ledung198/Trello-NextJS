@@ -4,7 +4,7 @@ import { Plus, Brain, Users, Zap } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 
-import { Logo } from "@/components/logo";
+import Logo from "@/components/logo";
 import { Button } from "@/components/ui/button";
 import { UserButton } from "@clerk/nextjs";
 
