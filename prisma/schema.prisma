@@ -26,6 +26,9 @@ model Board {
   updatedAt DateTime @updatedAt
 
   lists     List[]
+  labels    Label[]
+  members   BoardMember[]
+  activities Activity[]
 
   @@map("boards")
 }
@@ -50,10 +53,137 @@ model Card {
   order       Int
   description String?  @db.Text
   listId      String
+  dueDate     DateTime?
+  startDate   DateTime?
+  completed   Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
   list        List     @relation(fields: [listId], references: [id], onDelete: Cascade)
+  members     CardMember[]
+  labels      CardLabel[]
+  comments    Comment[]
+  attachments Attachment[]
+  checklists  Checklist[]
 
   @@map("cards")
+}
+
+model Label {
+  id      String @id @default(cuid())
+  name    String
+  color   String
+  boardId String
+
+  board   Board @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  cards   CardLabel[]
+
+  @@map("labels")
+}
+
+model CardLabel {
+  id      String @id @default(cuid())
+  cardId  String
+  labelId String
+
+  card    Card  @relation(fields: [cardId], references: [id], onDelete: Cascade)
+  label   Label @relation(fields: [labelId], references: [id], onDelete: Cascade)
+
+  @@unique([cardId, labelId])
+  @@map("card_labels")
+}
+
+model BoardMember {
+  id      String @id @default(cuid())
+  userId  String
+  boardId String
+  role    String @default("member") // admin, member, observer
+
+  board   Board @relation(fields: [boardId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, boardId])
+  @@map("board_members")
+}
+
+model CardMember {
+  id     String @id @default(cuid())
+  userId String
+  cardId String
+
+  card   Card @relation(fields: [cardId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, cardId])
+  @@map("card_members")
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  content   String   @db.Text
+  userId    String
+  cardId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  card      Card @relation(fields: [cardId], references: [id], onDelete: Cascade)
+
+  @@map("comments")
+}
+
+model Attachment {
+  id        String   @id @default(cuid())
+  name      String
+  url       String
+  size      Int?
+  mimeType  String?
+  cardId    String
+  userId    String
+  createdAt DateTime @default(now())
+
+  card      Card @relation(fields: [cardId], references: [id], onDelete: Cascade)
+
+  @@map("attachments")
+}
+
+model Checklist {
+  id        String   @id @default(cuid())
+  title     String
+  cardId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  card      Card @relation(fields: [cardId], references: [id], onDelete: Cascade)
+  items     ChecklistItem[]
+
+  @@map("checklists")
+}
+
+model ChecklistItem {
+  id          String   @id @default(cuid())
+  title       String
+  completed   Boolean  @default(false)
+  order       Int
+  checklistId String
+  dueDate     DateTime?
+  assignedTo  String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  checklist   Checklist @relation(fields: [checklistId], references: [id], onDelete: Cascade)
+
+  @@map("checklist_items")
+}
+
+model Activity {
+  id        String   @id @default(cuid())
+  type      String   // created, updated, moved, commented, etc.
+  content   String
+  userId    String
+  boardId   String
+  cardId    String?
+  listId    String?
+  createdAt DateTime @default(now())
+
+  board     Board @relation(fields: [boardId], references: [id], onDelete: Cascade)
+
+  @@map("activities")
 }
