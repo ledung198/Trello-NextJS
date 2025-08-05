@@ -28,10 +28,10 @@ const MarketingPage = () => {
           <Medal className="h-6 w-6 mr-2" />
           No 1 task managment
         </div>
-        <h1 className="text03xl md:text6xl text-center text-neutral-800 mb-6">
+        <h1 className="text-3xl md:text-6xl text-center text-neutral-800 mb-6">
           Taskify helps team move
         </h1>
-        <div className="text-3xl md:text-6xl bg-gradient-to-r from-fuchsia-600 to-pink-600 text-white px-4 p-2 rounded-mb uppercase">
+        <div className="text-3xl md:text-6xl bg-gradient-to-r from-fuchsia-600 to-pink-600 text-white px-4 p-2 rounded-md uppercase">
           work forward.
         </div>
       </div>
